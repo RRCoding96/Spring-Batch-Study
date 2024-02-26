@@ -24,7 +24,7 @@ public class JobRunner implements ApplicationRunner {
         JobParameters jobParameters = new JobParametersBuilder()
             .addString("name", "user1")
             .addLong("seq", 1L)
-//            .addDate("date", new Date())
+            .addDate("date", new Date())
             .toJobParameters();
 
         jobLauncher.run(job, jobParameters);
