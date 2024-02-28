@@ -6,18 +6,16 @@ import io.springbatch.springbatch.tasklet.ExecutionContextTasklet3;
 import io.springbatch.springbatch.tasklet.ExecutionContextTasklet4;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.job.flow.Flow;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
-
-import java.util.Date;
-import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
@@ -32,15 +30,18 @@ public class ExecutionContextConfiguration {
     public Job job(
         JobRepository jobRepository,
         Step step1,
+        Flow flow,
         Step step2,
         Step step3,
         Step step4
     ) {
         return new JobBuilder("Job", jobRepository)
-            .start(step1)
+            .incrementer(new RunIdIncrementer())
+            .start(flow)
             .next(step2)
             .next(step3)
             .next(step4)
+            .end()
             .build();
     }
 
@@ -57,6 +58,23 @@ public class ExecutionContextConfiguration {
             .tasklet(executionContextTasklet2, tx)
             .build();
     }
+
+    @Bean
+    public Flow flow(Step step3, Step step4) {
+        return new FlowBuilder<Flow>("flow")
+            .start(step3)
+            .next(step4)
+            .build();
+    }
+
+//    @Bean
+//    public Flow flow() {
+//        FlowBuilder<Flow> flowBuilder = new FlowBuilder<>("flow");
+//        flowBuilder.start(step3())
+//            .next(step4())
+//            .end();
+//        return flowBuilder.build();
+//    }
 
     @Bean
     public Step step3(JobRepository jobRepository, PlatformTransactionManager tx) {
