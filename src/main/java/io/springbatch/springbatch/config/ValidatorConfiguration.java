@@ -1,5 +1,6 @@
 package io.springbatch.springbatch.config;
 
+import io.springbatch.springbatch.incrementer.CustomJobParametersIncrementer;
 import io.springbatch.springbatch.tasklet.ExecutionContextTasklet1;
 import io.springbatch.springbatch.tasklet.ExecutionContextTasklet2;
 import io.springbatch.springbatch.tasklet.ExecutionContextTasklet3;
@@ -37,12 +38,12 @@ public class ValidatorConfiguration {
         Step step4
     ) {
         return new JobBuilder("Job", jobRepository)
-//            .validator(new DefaultJobParametersValidator(new String[]{"name"}, new String[]{"year"}))
+//            .incrementer(new RunIdIncrementer())
+            .incrementer(new CustomJobParametersIncrementer())
             .start(step1)
             .next(step2)
             .next(step3)
             .next(step4)
-            .validator(new CustomJobParametersValidator())
             .build();
     }
 
