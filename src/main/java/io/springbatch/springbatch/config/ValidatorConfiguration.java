@@ -4,9 +4,11 @@ import io.springbatch.springbatch.tasklet.ExecutionContextTasklet1;
 import io.springbatch.springbatch.tasklet.ExecutionContextTasklet2;
 import io.springbatch.springbatch.tasklet.ExecutionContextTasklet3;
 import io.springbatch.springbatch.tasklet.ExecutionContextTasklet4;
+import io.springbatch.springbatch.validator.CustomJobParametersValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.job.DefaultJobParametersValidator;
 import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.flow.Flow;
@@ -19,7 +21,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class ExecutionContextConfiguration {
+public class ValidatorConfiguration {
 
     private final ExecutionContextTasklet1 executionContextTasklet1;
     private final ExecutionContextTasklet2 executionContextTasklet2;
@@ -30,18 +32,17 @@ public class ExecutionContextConfiguration {
     public Job job(
         JobRepository jobRepository,
         Step step1,
-        Flow flow,
         Step step2,
         Step step3,
         Step step4
     ) {
         return new JobBuilder("Job", jobRepository)
-            .incrementer(new RunIdIncrementer())
-            .start(flow)
+//            .validator(new DefaultJobParametersValidator(new String[]{"name"}, new String[]{"year"}))
+            .start(step1)
             .next(step2)
             .next(step3)
             .next(step4)
-            .end()
+            .validator(new CustomJobParametersValidator())
             .build();
     }
 
