@@ -1,19 +1,17 @@
 package io.springbatch.springbatch.config;
 
 import io.springbatch.springbatch.incrementer.CustomJobParametersIncrementer;
+import io.springbatch.springbatch.joblistener.CustomJobListener;
 import io.springbatch.springbatch.tasklet.ExecutionContextTasklet1;
 import io.springbatch.springbatch.tasklet.ExecutionContextTasklet2;
 import io.springbatch.springbatch.tasklet.ExecutionContextTasklet3;
 import io.springbatch.springbatch.tasklet.ExecutionContextTasklet4;
-import io.springbatch.springbatch.validator.CustomJobParametersValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.job.DefaultJobParametersValidator;
 import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.flow.Flow;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class ValidatorConfiguration {
+public class JobConfiguration {
 
     private final ExecutionContextTasklet1 executionContextTasklet1;
     private final ExecutionContextTasklet2 executionContextTasklet2;
@@ -44,6 +42,7 @@ public class ValidatorConfiguration {
             .next(step2)
             .next(step3)
             .next(step4)
+            .listener(new CustomJobListener())
             .build();
     }
 
