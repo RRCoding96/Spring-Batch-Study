@@ -36,4 +36,4 @@ spring:
     job:
       enabled: false
 #      name: ${job.name:NONE}
-#      name: Job
+      names: chunkJob,Job
