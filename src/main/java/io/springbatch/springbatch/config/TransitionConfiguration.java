@@ -18,18 +18,24 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @RequiredArgsConstructor
 @Configuration
-public class StartNextConfiguration {
+public class TransitionConfiguration {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager tx;
 
     @Bean
     public Job startNextJob() {
-        return new JobBuilder("startNextJob", jobRepository)
-            .start(flowA())
-            .next(step3())
-            .next(flowB())
-            .next(step6())
+        return new JobBuilder("transitionJob", jobRepository)
+            .start(step1())
+                .on("FAILED")
+                .to(step2())
+                .on("*")
+                .stop()
+            .from(step1()).on("*")
+                .to(step5())
+                .next(step6())
+                .on("COMPLETED")
+                .end()
             .end()
             .build();
     }
