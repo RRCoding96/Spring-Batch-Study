@@ -20,8 +20,11 @@ import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
-//@Configuration
+@Configuration
 public class ChunkConfiguration {
+
+    private final JobRepository jobRepository;
+    private final PlatformTransactionManager tx;
 
     @Bean
     public Job chunkJob(
@@ -37,7 +40,7 @@ public class ChunkConfiguration {
     }
 
     @Bean
-    public Step chunkStep1(JobRepository jobRepository, PlatformTransactionManager tx) {
+    public Step chunkStep1() {
         return new StepBuilder("chunkStep1", jobRepository)
             .<String, String>chunk(2, tx)
             .reader(new ListItemReader<>(Arrays.asList("item1", "item2", "item3","item4", "item5", "item6")))
@@ -60,7 +63,7 @@ public class ChunkConfiguration {
     }
 
     @Bean
-    public Step chunkStep2(JobRepository jobRepository, PlatformTransactionManager tx) {
+    public Step chunkStep2() {
         return new StepBuilder("chunkStep2", jobRepository)
             .tasklet((contribution, chunkContext) -> {
                 System.out.println("chunkStep2 has executed");
